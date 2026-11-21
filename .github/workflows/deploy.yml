@@ -16,7 +16,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::6203-3986-9704:role/github-deployer
+          role-to-assume: arn:aws:iam::620339869704:role/group1-project-role
           aws-region: us-east-1
 
       - name: Upload site to S3
