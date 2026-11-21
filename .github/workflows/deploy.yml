@@ -21,5 +21,5 @@ jobs:
 
       - name: Upload site to S3
         run: |
-          aws s3 sync . s3://YOUR-BUCKET --delete \
+          aws s3 sync . s3://uml-group1-project-bucket --delete \
             --exclude ".git/*" --exclude ".github/*" --exclude "README.md"
