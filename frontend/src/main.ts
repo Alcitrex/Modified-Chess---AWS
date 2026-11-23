@@ -18,7 +18,7 @@ const startPieces: string[] = [
     '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '',
     Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Pawn,
-    Rook, Knight, Bishop, King, Queen, Bishop, Knight, Rook,
+    Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook,
 ];
 
 function createBoard(): void {
