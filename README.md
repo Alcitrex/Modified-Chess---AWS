@@ -1,47 +1,100 @@
-<h1 align="center">Simple JavaScript Chess Game</h1>
+# Chess
 
-<p align="center">
-  <em>Play chess right in your browser with this minimalist JavaScript chess game.</em>
-</p>
+Browser chess game with a serverless AWS backend that saves each signed-in user's game state.
 
-<div align="center">
-  <img src="chess.png" alt="Chess Board">
-</div>
+- **Frontend:** Vite + TypeScript, drag-and-drop board, piece icons from Font Awesome Free (stored locally).
+- **Backend:** AWS CDK (Python). One stack, `ChessStack`, holds everything:
+  S3 + CloudFront (site), Cognito (auth), API Gateway HTTP API, Lambda (Python 3.12), DynamoDB (game state).
 
-## Play Chess Here [Simple Chess](https://sahilm2063.github.io/Simple-Chess-Using-Javascript/)
+The game does not include check detection, checkmate, move highlighting or pawn promotion.
 
-## 🚀 Introduction
+## Repo layout
 
-Welcome to the Simple JavaScript Chess Game project! This is a lightweight implementation of a chess game using only HTML, CSS, and JavaScript. It's designed to provide a straightforward chess-playing experience without the complexities of advanced features. Whether you're looking for a basic chess game or a starting point to build upon, this project has you covered.
+```
+frontend/              Vite + TypeScript app
+  src/main.ts          board, move validation, turn handling
+  src/pieces.ts        piece markup, imports SVGs from src/assets/pieces/
+  src/config.ts        API / Cognito settings read from VITE_* env vars
+  public/              static files copied as-is
+backend/               CDK app
+  app.py               CDK entry point
+  stacks/chess_stack.py  all AWS resources
+  lambda/handler.py    GET / PUT / DELETE /game
+.github/workflows/     deploy-frontend.yml, deploy-backend.yml
+```
 
-## 🛠️ Getting Started
+## Prerequisites
 
-To get started with the Simple JavaScript Chess Game, follow these steps:
+- Node 22 or 24 and npm
+- Python 3.12+
+- AWS CLI with credentials (only for deploying or inspecting the stack)
+- AWS CDK CLI: `npm install -g aws-cdk@2`
 
-1. Clone or download the repository to your local machine.
-2. Open the `index.html` file in your __Microsoft Edge__(required) browser.
-3. The chessboard will be displayed, ready for you to start playing.
+## Frontend: run locally
 
-## 🎮 How to Play
+```bash
+cd frontend
+npm install        # first time
+npm run dev        # http://localhost:5173
+```
 
-1. Open the game in your web browser.
-2. Drag a chess piece to select.
-3. Drop om a valid place. (you can only place piece on valid spot according to piece.) 
-4. The game doesn't include advanced features like check detection, checkmate, move highlightation or pawn promotion.
+- `npm run build` typechecks (`tsc`) and writes `dist/`.
+- `npm run preview` serves the production build.
+- The game itself runs client-side and needs no backend yet.
 
-Remember, this project is designed to be a simple implementation of chess, without complex rules or interactions.
+To point the dev server at a deployed backend, create `frontend/.env.local` (gitignored) with the stack outputs:
 
-## 🤝 Contributing
+```
+VITE_API_URL=...
+VITE_USER_POOL_ID=...
+VITE_USER_POOL_CLIENT_ID=...
+```
 
-Contributions to this project are not only welcome but encouraged! If you have ideas for improvements, want to fix bugs, or want to add more features while maintaining the project's simplicity, please feel free to submit a pull request.
+These values are public identifiers, not secrets: they end up in the browser bundle by design.
+Access is enforced server-side by the Cognito JWT authorizer. Never put real secrets in a `VITE_*` variable.
 
-## 🙏 Thank You
+## Backend: work on it
 
-Thank you for checking out the Simple JavaScript Chess Game project! If you have any questions, feedback, or just want to connect, feel free to reach out to me:
+```bash
+cd backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cdk synth          # validates the stack, no AWS calls needed
+cdk diff           # compare with the deployed stack
+```
 
-- **Name:** Sahil Makadia
-- **Email:** makadiasahil9846@gmail.com
+- `cdk deploy` and `cdk diff` need AWS credentials for the account.
+- The account must be bootstrapped once: `cdk bootstrap aws://<account>/us-east-1`.
+- Lambda code lives in `backend/lambda/` and is packaged by CDK. Environment variables (e.g. `TABLE_NAME`) are set in `chess_stack.py`.
+- The API requires a Cognito JWT. An unauthenticated call to `/game` should return `401`.
 
----
+## Deployment
 
-Happy coding and playing! 🎲
+Both workflows run on push to `main` and authenticate to AWS with GitHub OIDC (no stored keys).
+
+| Workflow | Trigger paths | What it does |
+|---|---|---|
+| `deploy-backend.yml` | `backend/**` | `cdk synth`, then `cdk deploy` for `ChessStack` |
+| `deploy-frontend.yml` | `frontend/**` | reads stack outputs, builds with them, syncs `dist/` to the site bucket, invalidates CloudFront |
+
+Notes:
+
+- CDK does not manage the site files. The frontend workflow owns the bucket contents, so a backend deploy never touches them.
+- The frontend workflow fails with a clear message if `ChessStack` is missing an output. Deploy the backend first on a fresh account.
+- A change to the API URL or Cognito IDs needs a frontend rebuild, so re-run the frontend workflow after such a backend change.
+- The stack outputs `SiteUrl`, `ApiUrl`, `UserPoolId`, `UserPoolClientId`, `SiteBucketName`, `DistributionId` and `TableName`:
+  `aws cloudformation describe-stacks --stack-name ChessStack --query "Stacks[0].Outputs"`
+- Bucket, table and user pool use `RETAIN`. Deleting the stack leaves them behind.
+
+## Contributing
+
+1. Branch from `main`.
+2. Keep frontend and backend changes in separate commits where possible, since each triggers its own workflow.
+3. Before opening a PR, run `npm run build` in `frontend/` and `cdk synth` in `backend/`.
+4. Keep commits small with a short imperative subject (e.g. `Add login page`).
+5. Open a PR to `main`. Merging deploys.
+
+## Credits
+
+Chess piece icons: [Font Awesome Free](https://fontawesome.com) 6.4.0, CC BY 4.0.
+Original game by Sahil Makadia ([Simple-Chess-Using-Javascript](https://github.com/sahilm2063/Simple-Chess-Using-Javascript)).
