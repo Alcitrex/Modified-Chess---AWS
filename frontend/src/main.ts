@@ -2,6 +2,7 @@ import "./style.css";
 import { King, Queen, Bishop, Knight, Rook, Pawn } from "./pieces";
 
 const gameBoard = document.querySelector<HTMLElement>("#gameboard")!;
+const gameOptions = document.querySelector<HTMLElement>("#game-options")!;
 const playerDetails = document.querySelector<HTMLElement>("#player")!;
 const infoDisplay = document.querySelector<HTMLElement>("#info-display")!;
 const err = document.querySelector<HTMLElement>("#err")!;

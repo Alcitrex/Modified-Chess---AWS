@@ -73,10 +73,23 @@ path {
 }
 
 #game-options {
-    display: flex;
+    display: none;
+    position: absolute;
+    z-index: 20;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    flex-direction: column;
     gap: 10px;
-    justify-content: center;
-    position: relative;
-    z-index: 11;
-    color: rgb(40, 40, 40);
+    padding: 20px;
+
+    background: rgba(40, 40, 40, 0.95);
+    border-radius: 10px;
+}
+
+#game-options button {
+    padding: 15px;
+    cursor: pointer;
 }
