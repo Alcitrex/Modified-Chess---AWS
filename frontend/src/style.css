@@ -77,4 +77,5 @@ path {
     gap: 10px;
     justify-content: center;
     fill: rgb(40, 40, 40);
+    z-index: 11;
 }
