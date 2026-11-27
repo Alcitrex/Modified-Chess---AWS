@@ -8,6 +8,7 @@ const infoDisplay = document.querySelector<HTMLElement>("#info-display")!;
 const err = document.querySelector<HTMLElement>("#err")!;
 const width = 8;
 
+let moveCounter = 0;
 let playerTurn: "black" | "white" = "white";
 playerDetails.textContent = "white";
 
@@ -120,7 +121,7 @@ function dragdrop(e: DragEvent): void {
 /*These arrays are all offsets off the original position, i.e if you're on tile 18 and want to move like down or up, you'd add the width or sub the width*/
 const STRAIGHT = [width, -width, 1, -1];   /*So since the board is a grid, we can move up/down by the width and left and right by -1 and 1*/
 const DIAGONAL = [width + 1, width - 1, -width + 1, -width - 1];
-const EIGHT_DIRECTIONS = [width, -width, 1, -1, width + 1, width - 1, -width + 1, -width - 1]; 
+const EIGHT_DIRECTIONS = [width, -width, 1, -1, width + 1, width - 1, -width + 1, -width - 1];
 
 /*So this function is generally for the pieces that can go really long distances like the bishop rook and the queen
 I just optimized it here because seriously the original lines were LONG*/
@@ -128,7 +129,7 @@ function checkDirections(startId: number, targetId: number, directions: number[]
     for (const d of directions) {
         for (let step = 1; step < width; step++) {
             const squareId = startId + d * step;
-            if (squareId === targetId) return true;   
+            if (squareId === targetId) return true;
             if (occupied(squareId)) break;            /*This means we met another piece on the way to the target id, for pieces that dont allow jumping this fails*/
         }
     }
@@ -201,6 +202,11 @@ function checkIfValid(target: HTMLElement): boolean {
 }
 
 function changePlayer(): void {
+  moveCounter++
+  if (moveCounter % 5 == 0) {
+    showOptions();
+    moveCounter = 0;
+  }
     if (playerTurn === "black") {
         reverseIds();
         playerTurn = "white";
