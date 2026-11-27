@@ -321,6 +321,15 @@ function checkIfValid(target: HTMLElement): boolean {
                 return true
             }
             break;
+        case 'bombs':
+            const starterRowa = [8, 9, 10, 11, 12, 13, 14, 15];
+            if (starterRowa.includes(startId) && startId + width * 2 === targetId ||
+                startId + width === targetId ||
+                startId + width - 1 === targetId && occupied(startId + width - 1) ||
+                startId + width + 1 === targetId && occupied(startId + width + 1)) {
+                return true;
+            }
+            break;
         default:
             break;
     }
