@@ -73,24 +73,28 @@ path {
 }
 
 
+#gameboard {
+    position: relative;   /* anchor for the overlay */
+    width: 480px;
+    height: 480px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
 #game-options {
     display: none;
     position: absolute;
     z-index: 20;
-
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
     flex-direction: column;
     gap: 10px;
     padding: 20px;
-
     background: rgba(40, 40, 40, 0.95);
     border-radius: 10px;
 }
 
-#game-options button {
-    padding: 15px;
-    cursor: pointer;
+#game-options.visible {
+    display: flex;
 }

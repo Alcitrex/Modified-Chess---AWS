@@ -51,7 +51,7 @@ function createBoard(): void {
 }
 
 createBoard();
-
+showOptions();
 const allSquares = document.querySelectorAll<HTMLElement>("#gameboard .square");
 
 allSquares.forEach(square => {
@@ -365,4 +365,14 @@ function checkForWin(): void {
         document.querySelectorAll<HTMLElement>(".square").forEach(square =>
             square.firstElementChild?.setAttribute("draggable", "false"));
     }
+}
+
+// new stuff
+
+function showOptions(): void {
+    gameOptions.classList.add("visible");
+}
+
+function hideOptions(): void {
+    gameOptions.classList.remove("visible");
 }
