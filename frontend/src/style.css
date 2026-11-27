@@ -76,6 +76,7 @@ path {
     display: flex;
     gap: 10px;
     justify-content: center;
-    fill: rgb(40, 40, 40);
+    position: relative;
     z-index: 11;
+    color: rgb(40, 40, 40);
 }
