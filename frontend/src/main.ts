@@ -83,7 +83,10 @@ function dragdrop(e: DragEvent): void {
     if (!draggedElement) return;
 
     // A drop on a piece can land on its inner <svg>/<path>; climb up to the piece (or empty square)
-    const target = (e.target as Element).closest<HTMLElement>(".piece, .square")!;
+  let target = (e.target as Element).closest<HTMLElement>(".piece, .square")!;
+  if (target.classList.contains("square") && target.firstElementChild) {
+      target = target.firstElementChild as HTMLElement;
+  }
     const correctTurn = draggedElement.firstElementChild!.classList.contains(playerTurn);
     const taken = target.classList.contains("piece");
     const valid = checkIfValid(target);
