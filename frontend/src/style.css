@@ -98,3 +98,12 @@ path {
 #game-options.visible {
     display: flex;
 }
+
+.square img {
+    width: 40px;
+    height: 40px;
+    pointer-events: none;   /* so you drag the piece, not the image */
+}
+
+.square img.black { outline: 3px solid #282828; border-radius: 50%; }
+.square img.white { outline: 3px solid #fff; border-radius: 50%; }

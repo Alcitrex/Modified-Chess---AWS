@@ -1,5 +1,5 @@
 import "./style.css";
-import { King, Queen, Bishop, Knight, Rook, Pawn } from "./pieces";
+import { King, Queen, Bishop, Knight, Rook, Pawn, Bombs} from "./pieces";
 
 const gameBoard = document.querySelector<HTMLElement>("#gameboard")!;
 const gameOptions = document.querySelector<HTMLElement>("#game-options")!;
@@ -18,7 +18,7 @@ const startPieces: string[] = [
     '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '',
-    Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Pawn,
+    Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Bombs,
     Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook,
 ];
 
