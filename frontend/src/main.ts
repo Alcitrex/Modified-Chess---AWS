@@ -121,6 +121,17 @@ function dragdrop(e: DragEvent): void {
 const STRAIGHT = [width, -width, 1, -1];   /*So since the board is a grid, we can move up/down by the width and left and right by -1 and 1*/
 const DIAGONAL = [width + 1, width - 1, -width + 1, -width - 1];
 const KING_STEPS = [width, -width, 1, -1, width + 1, width - 1, -width + 1, -width - 1]; 
+
+function checkDirections(startId: number, targetId: number, directions: number[]): boolean {
+    for (const d of directions) {
+        for (let step = 1; step < width; step++) {
+            const squareId = startId + d * step;
+            if (squareId === targetId) return true;   // reached the target
+            if (occupied(squareId)) break;            // blocked, try the next direction
+        }
+    }
+    return false;                                     // no direction worked
+}
 function checkIfValid(target: HTMLElement): boolean {
     const targetId = Number(target.getAttribute('square-id')) || Number(target.parentElement?.getAttribute('square-id'));
     const startId = Number(startPositionId);
@@ -153,47 +164,8 @@ function checkIfValid(target: HTMLElement): boolean {
             break;
 
         case 'bishop':
-            if (
-                // for right cross --- forward
-                startId + width + 1 === targetId ||
-                startId + width * 2 + 2 === targetId && !occupied(startId + width + 1) ||
-                startId + width * 3 + 3 === targetId && !occupied(startId + width + 1) && !occupied(startId + width * 2 + 2) ||
-                startId + width * 4 + 4 === targetId && !occupied(startId + width + 1) && !occupied(startId + width * 2 + 2) && !occupied(startId + width * 3 + 3) ||
-                startId + width * 5 + 5 === targetId && !occupied(startId + width + 1) && !occupied(startId + width * 2 + 2) && !occupied(startId + width * 3 + 3) && !occupied(startId + width * 4 + 4) ||
-                startId + width * 6 + 6 === targetId && !occupied(startId + width + 1) && !occupied(startId + width * 2 + 2) && !occupied(startId + width * 3 + 3) && !occupied(startId + width * 4 + 4) && !occupied(startId + width * 5 + 5) ||
-                startId + width * 7 + 7 === targetId && !occupied(startId + width + 1) && !occupied(startId + width * 2 + 2) && !occupied(startId + width * 3 + 3) && !occupied(startId + width * 4 + 4) && !occupied(startId + width * 5 + 5) && !occupied(startId + width * 6 + 6) ||
-
-                // for left cross --- forward
-                startId + width - 1 === targetId ||
-                startId + width * 2 - 2 === targetId && !occupied(startId + width - 1) ||
-                startId + width * 3 - 3 === targetId && !occupied(startId + width - 1) && !occupied(startId + width * 2 - 2) ||
-                startId + width * 4 - 4 === targetId && !occupied(startId + width - 1) && !occupied(startId + width * 2 - 2) && !occupied(startId + width * 3 - 3) ||
-                startId + width * 5 - 5 === targetId && !occupied(startId + width - 1) && !occupied(startId + width * 2 - 2) && !occupied(startId + width * 3 - 3) && !occupied(startId + width * 4 - 4) ||
-                startId + width * 6 - 6 === targetId && !occupied(startId + width - 1) && !occupied(startId + width * 2 - 2) && !occupied(startId + width * 3 - 3) && !occupied(startId + width * 4 - 4) && !occupied(startId + width * 5 - 5) ||
-                startId + width * 7 - 7 === targetId && !occupied(startId + width - 1) && !occupied(startId + width * 2 - 2) && !occupied(startId + width * 3 - 3) && !occupied(startId + width * 4 - 4) && !occupied(startId + width * 5 - 5) && !occupied(startId + width * 6 - 6) ||
-
-                // for right cross --- backward
-                startId - width - 1 === targetId ||
-                startId - width * 2 - 2 === targetId && !occupied(startId - width - 1) ||
-                startId - width * 3 - 3 === targetId && !occupied(startId - width - 1) && !occupied(startId - width * 2 - 2) ||
-                startId - width * 4 - 4 === targetId && !occupied(startId - width - 1) && !occupied(startId - width * 2 - 2) && !occupied(startId - width * 3 - 3) ||
-                startId - width * 5 - 5 === targetId && !occupied(startId - width - 1) && !occupied(startId - width * 2 - 2) && !occupied(startId - width * 3 - 3) && !occupied(startId - width * 4 - 4) ||
-                startId - width * 6 - 6 === targetId && !occupied(startId - width - 1) && !occupied(startId - width * 2 - 2) && !occupied(startId - width * 3 - 3) && !occupied(startId - width * 4 - 4) && !occupied(startId - width * 5 - 5) ||
-                startId - width * 7 - 7 === targetId && !occupied(startId - width - 1) && !occupied(startId - width * 2 - 2) && !occupied(startId - width * 3 - 3) && !occupied(startId - width * 4 - 4) && !occupied(startId - width * 5 - 5) && !occupied(startId + width * 6 - 6) ||
-
-                // fot left cross -- backward
-                startId - width + 1 === targetId ||
-                startId - width * 2 + 2 === targetId && !occupied(startId - width + 1) ||
-                startId - width * 3 + 3 === targetId && !occupied(startId - width + 1) && !occupied(startId - width * 2 + 2) ||
-                startId - width * 4 + 4 === targetId && !occupied(startId - width + 1) && !occupied(startId - width * 2 + 2) && !occupied(startId - width * 3 + 3) ||
-                startId - width * 5 + 5 === targetId && !occupied(startId - width + 1) && !occupied(startId - width * 2 + 2) && !occupied(startId - width * 3 + 3) && !occupied(startId - width * 4 + 4) ||
-                startId - width * 6 + 6 === targetId && !occupied(startId - width + 1) && !occupied(startId - width * 2 + 2) && !occupied(startId - width * 3 + 3) && !occupied(startId - width * 4 + 4) && !occupied(startId - width * 5 + 5) ||
-                startId - width * 7 + 7 === targetId && !occupied(startId - width + 1) && !occupied(startId - width * 2 + 2) && !occupied(startId - width * 3 + 3) && !occupied(startId - width * 4 + 4) && !occupied(startId - width * 5 + 5) && !occupied(startId + width * 6 + 6)
-            ) {
-                return true;
-            }
+            return checkDirections(startId, targetId, DIAGONAL);
             break;
-
         case 'rook':
             if (
                 // moving straight forward
