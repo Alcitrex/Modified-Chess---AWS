@@ -72,6 +72,12 @@ path {
     fill: rgb(255, 255, 255)
 }
 
+#board-container {
+    position: relative;
+    width: 480px;
+    height: 480px;
+}
+
 #game-options {
     display: none;
     position: absolute;
