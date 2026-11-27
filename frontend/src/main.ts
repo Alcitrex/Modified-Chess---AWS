@@ -256,3 +256,19 @@ function showOptions(): void {
 function hideOptions(): void {
     gameOptions.classList.remove("visible");
 }
+
+const option1 = document.querySelector<HTMLButtonElement>("#option1")!;
+const option2 = document.querySelector<HTMLButtonElement>("#option2")!;
+const option3 = document.querySelector<HTMLButtonElement>("#option3")!;
+
+option1.addEventListener("click", () => {
+    hideOptions();
+});
+
+option2.addEventListener("click", () => {
+    hideOptions();
+});
+
+option3.addEventListener("click", () => {
+    hideOptions();
+});
