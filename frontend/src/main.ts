@@ -8,8 +8,8 @@ const infoDisplay = document.querySelector<HTMLElement>("#info-display")!;
 const err = document.querySelector<HTMLElement>("#err")!;
 const width = 8;
 
-let playerTurn: "black" | "white" = "black";
-playerDetails.textContent = "black";
+let playerTurn: "black" | "white" = "white";
+playerDetails.textContent = "white";
 
 const startPieces: string[] = [
     Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook,
@@ -51,6 +51,7 @@ function createBoard(): void {
 }
 
 createBoard();
+reverseIds();
 
 const allSquares = document.querySelectorAll<HTMLElement>("#gameboard .square");
 
