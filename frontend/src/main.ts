@@ -51,7 +51,7 @@ function createBoard(): void {
 }
 
 createBoard();
-showOptions();
+
 const allSquares = document.querySelectorAll<HTMLElement>("#gameboard .square");
 
 allSquares.forEach(square => {
