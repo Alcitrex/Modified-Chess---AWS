@@ -83,10 +83,10 @@ function dragdrop(e: DragEvent): void {
     if (!draggedElement) return;
 
     // A drop on a piece can land on its inner <svg>/<path>; climb up to the piece (or empty square)
-  let target = (e.target as Element).closest<HTMLElement>(".piece, .square")!;
-  if (target.classList.contains("square") && target.firstElementChild) {
-      target = target.firstElementChild as HTMLElement;
-  }
+    let target = (e.target as Element).closest<HTMLElement>(".piece, .square")!;
+    if (target.classList.contains("square") && target.firstElementChild) {
+        target = target.firstElementChild as HTMLElement;
+    }
     const correctTurn = draggedElement.firstElementChild!.classList.contains(playerTurn);
     const taken = target.classList.contains("piece");
     const valid = checkIfValid(target);
@@ -117,7 +117,10 @@ function dragdrop(e: DragEvent): void {
         }
     }
 }
-
+/*These arrays are all offsets off the original position, i.e if you're on tile 18 and want to move like down or up, you'd add the width or sub the width*/
+const STRAIGHT = [width, -width, 1, -1];   /*So since the board is a grid, we can move up/down by the width and left and right by -1 and 1*/
+const DIAGONAL = [width + 1, width - 1, -width + 1, -width - 1];
+const KING_STEPS = [width, -width, 1, -1, width + 1, width - 1, -width + 1, -width - 1]; 
 function checkIfValid(target: HTMLElement): boolean {
     const targetId = Number(target.getAttribute('square-id')) || Number(target.parentElement?.getAttribute('square-id'));
     const startId = Number(startPositionId);
