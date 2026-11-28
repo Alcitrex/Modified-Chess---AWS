@@ -1,5 +1,7 @@
 import "./style.css";
 import { King, Queen, Bishop, Knight, Rook, Pawn, Bombs} from "./pieces";
+import { events } from "./event";
+
 
 const gameBoard = document.querySelector<HTMLElement>("#gameboard")!;
 const gameOptions = document.querySelector<HTMLElement>("#game-options")!;
@@ -19,7 +21,7 @@ const startPieces: string[] = [
     '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '',
     '', '', '', '', '', '', '', '',
-    Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Bombs,
+    Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Pawn, Pawn,
     Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook,
 ];
 
@@ -232,43 +234,67 @@ function revertIds(): void {
     });
 }
 
-function checkForWin(): void {
+function checkForWin(): boolean {
     const kings = Array.from(document.querySelectorAll<HTMLElement>("#king"));
-
+    let over = false;
     if (!kings.some(king => king.firstElementChild?.classList.contains("white"))) {
         infoDisplay.innerHTML = "Black Player Wins!";
-        document.querySelectorAll<HTMLElement>(".square").forEach(square =>
-            square.firstElementChild?.setAttribute("draggable", "false"));
+        over = true;
     }
     if (!kings.some(king => king.firstElementChild?.classList.contains("black"))) {
         infoDisplay.innerHTML = "White Player Wins!";
+        over = true;
+    }
+    if (over) {
         document.querySelectorAll<HTMLElement>(".square").forEach(square =>
             square.firstElementChild?.setAttribute("draggable", "false"));
     }
+    return over;
 }
 
-// new stuff
+//Added variables that werent in the original
+let optionsOpen = false;
+const option1 = document.querySelector<HTMLButtonElement>("#option1")!;
+const option2 = document.querySelector<HTMLButtonElement>("#option2")!;
+const option3 = document.querySelector<HTMLButtonElement>("#option3")!;
+const optionButtons = [option1, option2, option3];
 
+//Added functions that werent in original
 function showOptions(): void {
+    if (checkForWin()) return; /*If theres a win, you dont want to show the thing anyways*/
     gameOptions.classList.add("visible");
+    const picks = [...events].sort(() => Math.random() - 0.5);
+
+    optionButtons.forEach((button, i) => {
+        const ev = picks[i];
+        if (!ev) {                       // fewer events than buttons: hide the extra one
+            button.style.display = "none";
+            return;
+        }
+        button.style.display = "";
+        button.textContent = ev.name;
+        // onclick (not addEventListener) so each showing replaces the old handler
+        button.onclick = () => {
+            // changePlayer() has already flipped the turn by the time a button is clicked,
+            // so playerTurn here is the player who is about to move
+            infoDisplay.textContent = ev.run(playerTurn);
+            hideOptions();
+            checkForWin();               // an event might have removed a king
+        };
+    });
+
+    gameOptions.classList.add("visible");
+    optionsOpen = true;
 }
 
 function hideOptions(): void {
     gameOptions.classList.remove("visible");
 }
 
-const option1 = document.querySelector<HTMLButtonElement>("#option1")!;
-const option2 = document.querySelector<HTMLButtonElement>("#option2")!;
-const option3 = document.querySelector<HTMLButtonElement>("#option3")!;
 
-option1.addEventListener("click", () => {
-    hideOptions();
-});
-
-option2.addEventListener("click", () => {
-    hideOptions();
-});
-
-option3.addEventListener("click", () => {
-    hideOptions();
-});
+gameBoard.addEventListener("dragstart", e => {
+    if (optionsOpen) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+}, true);
