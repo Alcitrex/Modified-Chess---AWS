@@ -288,6 +288,7 @@ function showOptions(): void {
 }
 
 function hideOptions(): void {
+    optionsOpen = false;  
     gameOptions.classList.remove("visible");
 }
 
