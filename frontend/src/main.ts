@@ -292,7 +292,7 @@ function hideOptions(): void {
     gameOptions.classList.remove("visible");
 }
 
-
+/*Basically, this is like, if the selection menu is open, then you can't move any of your pieces*/
 gameBoard.addEventListener("dragstart", e => {
     if (optionsOpen) {
         e.preventDefault();
